@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bannad927.es.mapper.AreaDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bannad927.es.entity.AreaDetail">
+        <id column="id" property="id"/>
+        <result column="contract_id" property="contractId"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="floor" property="floor"/>
+        <result column="room_num" property="roomNum"/>
+        <result column="human_num" property="humanNum"/>
+        <result column="construction_batch_code" property="constructionBatchCode"/>
+        <result column="install_batch_code" property="installBatchCode"/>
+        <result column="construction_cost" property="constructionCost"/>
+        <result column="is_private" property="isPrivate"/>
+        <result column="is_extra" property="isExtra"/>
+        <result column="state" property="state"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="operator" property="operator"/>
+        <result column="is_del" property="isDel"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="washer_id" property="washerId"/>
+        <result column="log_id" property="logId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, contract_id, area_code, floor, room_num, human_num, construction_batch_code, install_batch_code, construction_cost, is_private, is_extra, state, device_id, operator, is_del, update_time, create_time, washer_id, log_id
+    </sql>
+
+    <select id="findByDeviceId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_area_detail
+        WHERE is_del = 0 AND device_id = #{deviceId}
+    </select>
+
+</mapper>
