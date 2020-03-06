@@ -1,0 +1,7 @@
+GET http://127.0.0.1:3000/areaDetail/findById?id=8866
+
+###
+
+GET http://127.0.0.1:3000/areaDetail/findByAll
+
+###

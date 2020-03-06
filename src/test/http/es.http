@@ -1,0 +1,27 @@
+GET http://127.0.0.1:3000/es/areaDetail/findByAll
+
+###
+
+GET http://127.0.0.1:3000/es/areaDetail/findById?id=8866
+
+###
+
+GET http://127.0.0.1:3000/es/area/findById?id=666
+
+###
+
+GET http://127.0.0.1:3000/es/area/findByAreaCode?areaCode=4601010102
+
+###
+
+GET http://127.0.0.1:3000/es/area/findByAll
+
+###
+
+GET http://127.0.0.1:3000/es/deviceOrder/findById?id=7775290
+
+###
+
+GET http://127.0.0.1:3000/es/deviceOrder/findByOrderNumber?orderNumber=15833881898134644
+
+###

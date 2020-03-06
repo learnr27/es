@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration  scan="true" scanPeriod="60 seconds" debug="true">
-    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <!--  这是是logstash服务器地址 端口-->
+   <!-- <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        &lt;!&ndash;  这是是logstash服务器地址 端口&ndash;&gt;
         <destination>192.168.33.88:7788</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <providers>
@@ -14,7 +14,7 @@
                 <callerData/>
             </providers>
         </encoder>
-    </appender>
+    </appender>-->
 
     <!--设置上下文名称:默认为"default" 会出现在控制台上-->
     <contextName>es</contextName>
@@ -69,7 +69,7 @@
     <root level="INFO">
         <!--appender将会添加到这个loger-->
         <appender-ref ref="console" />
-        <appender-ref ref="stash"/>
+<!--        <appender-ref ref="stash"/>-->
         <appender-ref ref="file" />
     </root>
 
