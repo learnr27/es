@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * (TDeviceOrder)实体类
  *
- * @author chengbb@xmulife.com
+ * @author cbb
  * @since 2020-03-05 11:39:45
  */
 @Data

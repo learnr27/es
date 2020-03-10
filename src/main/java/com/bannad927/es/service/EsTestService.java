@@ -8,8 +8,11 @@ import com.bannad927.es.utils.EsClientSingleton;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -18,8 +21,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -28,39 +31,37 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.metrics.stats.Stats;
-import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.omg.CORBA.ServerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ResultsExtractor;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
  * https://blog.csdn.net/topdandan/article/details/81436141
  *
- * @author chengbb@xmulife.com
+ * @author cbb
  * @date 2020.3.5
  */
 @Service
@@ -90,35 +91,45 @@ public class EsTestService {
         public String city;
         public String createTime;
     }
+//
+//    RestHighLevelClient client = new RestHighLevelClient(
+//            RestClient.builder(
+//                    new HttpHost("39.97.189.116", 9200, "http")));
 
-    @PostConstruct
-    public void aggregationBuilders1(){
+
+    public void aggregationBuilders1() {
         SearchRequest searchRequest = new SearchRequest();
-        searchRequest.indices("t_device_order").types("_doc");
+        searchRequest.indices("device_order").types("_doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-        QueryBuilder queryBuilder= QueryBuilders.boolQuery()
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery()
                 .mustNot(QueryBuilders.multiMatchQuery("payWay", "3", "4", "20"))
-                .must(QueryBuilders.matchQuery("payState",1))
-                .must(QueryBuilders.matchQuery("isDel",0));
+                .must(QueryBuilders.matchQuery("payState", 1))
+                .must(QueryBuilders.matchQuery("isDel", 0));
 
-        SearchQuery searchQuery1 = new NativeSearchQueryBuilder()
-                .withQuery(queryBuilder).build();
+        // 聚合查询
+        NativeSearchQueryBuilder QueryBuilder1 = new NativeSearchQueryBuilder();
+        //添加聚合add, 可以聚合多次
+        QueryBuilder1.addAggregation(AggregationBuilders.terms("popular_brand").field("brand"));
+      /*  AggregatedPage<EsDeviceOrder> result1 = elasticsearchTemplate.queryForPage(QueryBuilder1.build(), EsDeviceOrder.class);
 
-
-        Page<EsDeviceOrder> page = deviceOrderRepository.search(searchQuery1);
-        List<EsDeviceOrder> deviceOrders = page.getContent();
-        for (EsDeviceOrder deviceOrder : deviceOrders) {
-            System.out.println(deviceOrders);
-        }
+        // 解析聚合
+        Aggregations aggregations = result1.getAggregations();
+        // 指定名称聚合
+        StringTerms agg = aggregations.get("popular_brand");
+        List<StringTerms.Bucket> buckets = agg.getBuckets();
+        //遍历buckets
+        for (StringTerms.Bucket bucket : buckets) {
+            System.out.println(bucket.getKeyAsString());
+            System.out.println(bucket.getDocCount());
+        }*/
 
     }
 
     /**
      * 聚合查询
-     *
      */
-    public void aggregationBuilders(){
+    public void aggregationBuilders() {
         //首先新建一个用于存储数据的集合
         List<String> userNameList = new ArrayList<>();
         //1.创建查询条件，也就是QueryBuild
@@ -137,7 +148,7 @@ public class EsTestService {
         //2.3重点来了！！！指定聚合函数,本例中以某个字段分组聚合为例（可根据你自己的聚合查询需求设置）
         //该聚合函数解释：计算该字段(假设为username)在所有文档中的出现频次，并按照降序排名（常用于某个字段的热度排名）
 
-        AbstractAggregationBuilder termsAggregation =AggregationBuilders
+        AbstractAggregationBuilder termsAggregation = AggregationBuilders
                 .global("price")
                 .subAggregation(AggregationBuilders.terms("modelName").field("快速洗"));
 
@@ -427,7 +438,7 @@ public class EsTestService {
             e.printStackTrace();
         }
         putMappingRequest.source(builder);
-        try {
+   /*     try {
             AcknowledgedResponse putMappingResponse = EsClientSingleton.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
             System.out.println(putMappingResponse);
             if (!putMappingResponse.isAcknowledged()) {
@@ -438,7 +449,7 @@ public class EsTestService {
         } catch (IOException e) {
             e.printStackTrace();
             log.info("mapping创建接口异常");
-        }
+        }*/
 
         log.info("mapping创建成功");
     }
@@ -468,13 +479,13 @@ public class EsTestService {
      * 判断index是否存在
      */
     public void existsIndex() {
-        try {
-            GetIndexRequest request = new GetIndexRequest("t_area_detail");
-            boolean response = EsClientSingleton.getInstance().indices().exists(request, RequestOptions.DEFAULT);
-            log.info("response:{}", response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            GetIndexRequest request = new GetIndexRequest("t_area_detail");
+//            boolean response = EsClientSingleton.getInstance().indices().exists(request, RequestOptions.DEFAULT);
+//            log.info("response:{}", response);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

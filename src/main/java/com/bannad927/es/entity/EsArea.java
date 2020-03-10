@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * 区域表,精确到楼级别(TArea)实体类
  *
- * @author chengbb@xmulife.com
+ * @author cbb
  * @since 2020-03-04 17:44:19
  */
 

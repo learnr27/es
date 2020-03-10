@@ -4,7 +4,7 @@ import com.bannad927.es.entity.EsDeviceOrder;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /**
- * @author chengbb@xmulife.com
+ * @author cbb
  * @date 2020.3.5
  */
 public interface DeviceOrderRepository extends ElasticsearchRepository<EsDeviceOrder, Integer> {

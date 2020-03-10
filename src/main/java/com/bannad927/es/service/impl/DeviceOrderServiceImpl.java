@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @author chengbb@xmulife.com
+ * @author cbb
  * @date 2020.3.5
  */
 @Service

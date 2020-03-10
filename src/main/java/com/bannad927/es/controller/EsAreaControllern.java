@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author chengbb@xmulife.com
+ * @author cbb
  * @date 2020.3.4
  */
 @RestController

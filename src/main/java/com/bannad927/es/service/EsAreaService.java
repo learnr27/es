@@ -3,7 +3,7 @@ package com.bannad927.es.service;
 import com.bannad927.es.entity.Result;
 
 /**
- * @author chengbb@xmulife.com
+ * @author cbb
  * @date 2020.3.4
  */
 public interface EsAreaService {

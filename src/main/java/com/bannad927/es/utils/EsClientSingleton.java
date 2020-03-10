@@ -10,7 +10,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
 /**
- * @author chengbb@xmulife.com
+ * @author cbb
  * @date 2020.3.5
  */
 public class EsClientSingleton {
