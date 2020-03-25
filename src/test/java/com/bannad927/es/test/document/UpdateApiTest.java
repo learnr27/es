@@ -1,4 +1,4 @@
-package com.bannad927.es.test;
+package com.bannad927.es.test.document;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.ElasticsearchException;

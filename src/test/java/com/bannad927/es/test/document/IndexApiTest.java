@@ -1,4 +1,4 @@
-package com.bannad927.es.test;
+package com.bannad927.es.test.document;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.ElasticsearchException;
@@ -11,6 +11,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author cbb
@@ -44,47 +47,59 @@ public class IndexApiTest {
     @Test
     public void indexApi() throws IOException {
         /******************同步*********************/
-/*        //索引
+       //索引
       IndexRequest request = new IndexRequest("posts");
         //请求的文档 id
-        request.id("1");
+        request.id("17");
         //以字符串形式提供的文档源
         String jsonString = "{" +
-                "\"id\":\"1\"," +
+                "\"id\":\"17\"," +
+                "\"age\":17," +
                 "\"user\":\"kimchy\"," +
+                "\"company\":\"bannad927\"," +
                 "\"postDate\":\"2020-03-10\"," +
                 "\"message\":\"trying out Elasticsearch\"" +
                 "}";
         request.source(jsonString, XContentType.JSON);
         IndexResponse jsonResponse =  client.index(request, RequestOptions.DEFAULT);
-        log.info("jsonResponse:{}",jsonResponse.toString());*/
+        log.info("jsonResponse:{}",jsonResponse.toString());
 
-     /*   Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("id", "2");
+       Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("id", "19");
+        jsonMap.put("age", 19);
         jsonMap.put("user", "chengbinbin");
+        jsonMap.put("company", "bannad927");
         jsonMap.put("postDate", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
         jsonMap.put("message", "trying out Elasticsearch by 程彬彬");
         IndexRequest mapRequest = new IndexRequest("posts")
-                .id("2").source(jsonMap);
+                .id("19").source(jsonMap);
         IndexResponse mapResponse = client.index(mapRequest, RequestOptions.DEFAULT);
         log.info("mapResponse:{}",mapResponse.toString());
-*/
-       /* XContentBuilder builder = XContentFactory.jsonBuilder();
+
+        XContentBuilder builder = XContentFactory.jsonBuilder();
         builder.startObject();
         {
-            builder.field("id", "3");
+            builder.field("age", 18);
+            builder.field("id", 18);
             builder.field("user", "程彬彬");
+            builder.field("company", "learnr27");
             builder.timeField("postDate", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
             builder.field("message", "试用Elasticsearch");
         }
         builder.endObject();
         IndexRequest builderRequest = new IndexRequest("posts")
-                .id("3").source(builder);
+                .id("18").source(builder);
 
         IndexResponse builderResponse = client.index(builderRequest, RequestOptions.DEFAULT);
         log.info("builderResponse:{}",builderResponse.toString());
-        log.info("+++++++++++++++++");*/
+        log.info("+++++++++++++++++");
 
+
+
+
+    }
+
+    public void indexAsync(){
         /****************异步**************/
         try {
             XContentBuilder request = XContentFactory.jsonBuilder();
@@ -136,8 +151,9 @@ public class IndexApiTest {
             if (e.status() == RestStatus.CONFLICT) {
                 log.info("引发的异常表示返回了版本冲突错误");
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
 }
